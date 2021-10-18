@@ -22,7 +22,22 @@ UI.prototype.addBookToList = function (book) {
   `;
 
     list.appendChild(row);
-}
+
+    // TRY TO ADD LOCAL STORAGE OPERATIONS TO INDEX.JS
+    // !! // !! // !! // !! // !! // !! // !! // !! // !! // !!
+    // Add book to local storage
+    if (localStorage.getItem('books') === null) {
+        books = [];
+    } else {
+        books = JSON.parse(localStorage.getItem('books'));
+    }
+
+    books.push(book);
+
+        localStorage.setItem('books', JSON.stringify(books));
+     // !! // !! // !! // !! // !! // !! // !! // !! // !! // !!
+};
+
 // Show Alert
 UI.prototype.showAlert = function (message, className) {
     // Create Div
@@ -45,10 +60,30 @@ UI.prototype.showAlert = function (message, className) {
 }
 
 // Delete Book
-UI.prototype.deleteBook = function(target) {
+UI.prototype.deleteBook = function (target) {
     if (target.className === 'delete') {
         target.parentElement.parentElement.remove()
     }
+
+    // TRY TO ADD LOCAL STORAGE OPERATIONS TO INDEX.JS
+    // !! // !! // !! // !! // !! // !! // !! // !! // !! // !!
+    // Delete book from local storage
+    let books;
+        if(localStorage.getItem('books') === null) {
+            books = [];
+        } else {
+            books = JSON.parse(localStorage.getItem('books'));
+        }
+
+        books.forEach(function(book, index) {
+            if(book != null) {
+                books.splice(index, 1)
+            }
+        });
+
+        localStorage.setItem('books', JSON.stringify(books));
+     // !! // !! // !! // !! // !! // !! // !! // !! // !! // !!
+
 }
 
 // CLear fields
@@ -57,6 +92,11 @@ UI.prototype.clearFields = function () {
     document.querySelector('#author').value = '';
     document.querySelector('#isbn').value = '';
 };
+
+
+    
+
+
 
 // Event Listeners for add book
 document.querySelector('#book-form').addEventListener('submit',
@@ -68,7 +108,7 @@ document.querySelector('#book-form').addEventListener('submit',
 
         // Instantiating book
         const book = new Book(title, author, isbn);
-        console.log(book);
+        // console.log(book);
         // instantiate ui
         const ui = new UI();
         console.log(ui);
@@ -90,6 +130,7 @@ document.querySelector('#book-form').addEventListener('submit',
 
         e.preventDefault();
     });
+
 
 // Event Listener for Delete
 document.querySelector('#book-list').addEventListener

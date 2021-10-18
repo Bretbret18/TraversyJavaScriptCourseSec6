@@ -1,5 +1,5 @@
 
-// Here we use es6 syntax: classes
+// Here we use es6 syntax: classes 
 class Book {
     constructor(title, author, isbn) {
         this.title = title;
@@ -22,7 +22,11 @@ class UI {
   `;
 
     list.appendChild(row);
-    }
+
+
+    };
+
+
     showAlert(message, className) {
         // Create Div
     const div = document.createElement('div');
@@ -48,13 +52,64 @@ class UI {
         }
     }
 
+
     clearFields() {
         document.querySelector('#title').value = '';
         document.querySelector('#author').value = '';
         document.querySelector('#isbn').value = '';
     }
+
 }
 
+// Local Storage Class
+class Store {
+    static getBooks(){
+        let books;
+        if(localStorage.getItem('books') === null) {
+            books = [];
+        } else {
+            books = JSON.parse(localStorage.getItem('books'));
+        }
+
+        return books;
+    }
+
+    static displayBooks(){
+        const books = Store.getBooks();
+
+        books.forEach(function(book) {
+            const ui = new UI;
+
+            // Add Book to UI
+            ui.addBookToList(book);
+        })
+    }
+
+    static addBook(book){
+        const books = Store.getBooks();
+
+        books.push(book);
+
+        localStorage.setItem('books', JSON.stringify(books));
+    }
+
+    static removeBook(isbn){
+        const books = Store.getBooks();
+
+        books.forEach(function(book, index) {
+            if(book.isbn === isbn) {
+                books.splice(index, 1)
+            }
+        });
+
+        localStorage.setItem('books', JSON.stringify(books));
+
+    }
+};
+
+
+// DOM Load Event
+document.addEventListener('DOMContentLoaded', Store.displayBooks())
 
 // Event Listeners for add book
 document.querySelector('#book-form').addEventListener('submit',
@@ -79,6 +134,9 @@ document.querySelector('#book-form').addEventListener('submit',
             // Add book to list
             ui.addBookToList(book);
 
+            // Add to Local Storage
+            Store.addBook(book);
+
             // Show Success
             ui.showAlert('Book Added!', 'success');
 
@@ -97,6 +155,12 @@ document.querySelector('#book-list').addEventListener
         const ui = new UI();
 
         ui.deleteBook(e.target);
+
+        // Remove From Local Storage
+        // targets isbn number
+        Store.removeBook(e.target.parentElement.
+            previousElementSibling.textContent)
+        
 
         // Show Alert
         ui.showAlert('Book removed', 'success');
